@@ -1,7 +1,7 @@
 # CEvent Planner Extra
 A UI helper plugin to visually generate and copy formatted events for Obsidian.
 
-> ⚠️ **Requirement:** You must install the main [CEvent Planner]() plugin first for these events to be tracked.
+> ⚠️ **Requirement:** You must install the main [CEvent Planner](https://community.obsidian.md/plugins/cevent-planner) plugin first for these events to be tracked.
 
 ## Features
 - **Visual Interface:** Clean, Material Design modal for event creation.
