@@ -1,7 +1,7 @@
 # CEvent Planner Extra
 A UI helper plugin to visually generate and copy formatted events for Obsidian.
 
-> ⚠️ **Requirement:** You must install the main [CEvent Planner](https://www.google.com/search?q=%23) plugin first for these events to be tracked.
+> ⚠️ **Requirement:** You must install the main [CEvent Planner]() plugin first for these events to be tracked.
 
 ## Features
 - **Visual Interface:** Clean, Material Design modal for event creation.
@@ -18,12 +18,12 @@ A UI helper plugin to visually generate and copy formatted events for Obsidian.
 When you Generate event this will look like this. Now can paste anywhere in valut.
 ```
 - [ ] Team Sync Meeting
-	- Date: 24-05-2026 to 25-05-2026
-	- Time: 02:00 PM to 03:00 PM
-	- Alarm: 01:45 PM
-	- Icon: 🚀
-	- Tag: #planning #work
-	- Repeat: weekly
+	- Date 24-05-2026 to 25-05-2026
+	- Time 02:00 PM to 03:00 PM
+	- Alarm 01:45 PM
+	- Icon 🚀
+	- Tag #planning #work
+	- Repeat weekly
 	>[!NOTE]
 	> Add additional context...
 	> Bring the quarterly reports.
