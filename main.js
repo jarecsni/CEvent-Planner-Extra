@@ -28,16 +28,25 @@ class CEventPlannerExtraPlugin extends Plugin {
         style.textContent = `
             /* Core Modal Setup */
             .cevent-extra-modal * { box-sizing: border-box; }
-            .cevent-extra-modal { display: flex; flex-direction: column; height: 85vh; max-height: 800px; width: 90vw; max-width: 650px; overflow: hidden; padding: 0; background-color: var(--background-primary); border-radius: 8px;}
-            
+
+            /* Size the dialog itself, not its content. Obsidian's .modal owns the
+               width/height constraints and adds its own padding, so sizing the inner
+               .modal-content instead made the form wider than the box that clips it
+               (650px of content inside a 560px dialog) - the right edge of every card
+               and part of the Generate button were cut off. Overriding the --dialog-*
+               variables keeps Obsidian's responsive behaviour intact, including phones,
+               where .modal-container narrows them. */
+            .modal.cevent-extra-modal-root { --dialog-width: min(650px, var(--modal-width)); height: min(800px, var(--dialog-max-height)); padding: 0; overflow: hidden; }
+            .cevent-extra-modal { display: flex; flex-direction: column; width: 100%; height: 100%; min-height: 0; overflow: hidden; padding: 0; background-color: var(--background-primary); border-radius: var(--modal-radius); }
+
             /* Header */
-            .cevent-extra-header { padding: 24px 24px 16px 24px; border-bottom: 1px solid var(--background-modifier-border); background: var(--background-secondary); z-index: 10; display: flex; align-items: center; gap: 12px;}
+            .cevent-extra-header { flex: 0 0 auto; padding: 24px 48px 16px 24px; border-bottom: 1px solid var(--background-modifier-border); background: var(--background-secondary); z-index: 10; display: flex; align-items: center; gap: 12px;}
             .cevent-extra-header-icon { width: 24px; height: 24px; color: var(--interactive-accent); display: flex; align-items: center; }
             .cevent-extra-header-icon svg { width: 100%; height: 100%; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
             .cevent-extra-header h2 { margin: 0; font-size: 1.4em; font-weight: 500; color: var(--text-normal); letter-spacing: 0.15px; }
             
             /* Perfect Scroll Content Area */
-            .cevent-extra-content-wrapper { flex: 1 1 auto; overflow-y: overlay; overflow-x: hidden; padding: 24px; scroll-behavior: smooth; }
+            .cevent-extra-content-wrapper { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; padding: 24px; scroll-behavior: smooth; }
             .cevent-extra-content-wrapper::-webkit-scrollbar { width: 10px; }
             .cevent-extra-content-wrapper::-webkit-scrollbar-track { background: transparent; }
             .cevent-extra-content-wrapper::-webkit-scrollbar-thumb { background-color: var(--background-modifier-border); border-radius: 10px; border: 2px solid var(--background-primary); }
@@ -61,8 +70,12 @@ class CEventPlannerExtraPlugin extends Plugin {
             .cevent-extra-input-icon svg { width: 100%; height: 100%; stroke: currentColor; stroke-width: 2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
             .cevent-extra-textarea-wrapper .cevent-extra-input-icon { top: 16px; transform: none; }
 
-            .cevent-extra-input, .cevent-extra-select, .cevent-extra-textarea { 
-                width: 100%; padding: 10px 16px 10px 40px; border-radius: 6px; 
+            /* height: auto - Obsidian's base rule gives every <select> a fixed
+               height: var(--input-height) (30px), which together with the border and the
+               vertical padding below left the option text an 8px content box for an
+               18.2px line, cutting it in half. */
+            .cevent-extra-input, .cevent-extra-select, .cevent-extra-textarea {
+                width: 100%; height: auto; padding: 10px 16px 10px 40px; border-radius: 6px;
                 border: 1px solid var(--background-modifier-border); background-color: var(--background-primary); 
                 color: var(--text-normal); font-family: inherit; font-size: 14px; 
                 transition: border-color 0.2s, box-shadow 0.2s; 
@@ -76,7 +89,7 @@ class CEventPlannerExtraPlugin extends Plugin {
             .cevent-extra-error-text { color: var(--text-error); font-size: 0.8em; margin-top: 2px; margin-left: 4px; display: none; font-weight: 500; }
             
             /* Material Footer & Button */
-            .cevent-extra-footer { padding: 16px 24px; border-top: 1px solid var(--background-modifier-border); background: var(--background-secondary); display: flex; justify-content: flex-end; z-index: 10; }
+            .cevent-extra-footer { flex: 0 0 auto; padding: 16px 24px; border-top: 1px solid var(--background-modifier-border); background: var(--background-secondary); display: flex; justify-content: flex-end; z-index: 10; }
             .cevent-extra-submit { 
                 display: flex; align-items: center; gap: 8px; position: relative; overflow: hidden; 
                 background-color: var(--interactive-accent); color: var(--text-on-accent); 
@@ -116,8 +129,10 @@ class EventPlannerModal extends Modal {
     }
 
     onOpen() {
-        this.modalEl.querySelector('.modal-content').style.padding = '0';
-        this.modalEl.querySelector('.modal-content').classList.add('cevent-extra-modal');
+        // .modal is the element that carries the size constraints and padding;
+        // .contentEl is its .modal-content child, which simply fills it.
+        this.modalEl.classList.add('cevent-extra-modal-root');
+        this.contentEl.classList.add('cevent-extra-modal');
         this.contentEl.empty();
         
         // Header
